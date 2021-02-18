@@ -27,19 +27,16 @@ passport.use(
       callbackURL: '/auth/google/callback',
       proxy: true,
     },
-    (accessToken, refreshToken, profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
       // check if user already exits inside the users collection
-      User.findOne({ googleId: profile.id }).then((existingUser) => {
-        if (existingUser) {
-          // we already have a record with the given profile ID
-          done(null, existingUser); // null tells passport there was no error and we pass the user info
-        } else {
-          // we don't have a user record with this ID, make a new record
-          new User({ googleId: profile.id })
-            .save()
-            .then((user) => done(null, user)); // null tells passport there was no error and we pass the newly created user info
-        }
-      });
+      const existingUser = await User.findOne({ googleId: profile.id });
+      if (existingUser) {
+        // we already have a record with the given profile ID
+        return done(null, existingUser); // null tells passport there was no error and we pass the user info
+      }
+      // we don't have a user record with this ID, make a new record
+      const user = await new User({ googleId: profile.id }).save();
+      done(null, user); // null tells passport there was no error and we pass the newly created user info
     }
   )
 );
