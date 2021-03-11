@@ -10,7 +10,13 @@ module.exports = (app) => {
   );
 
   // route handler once user is sent back to callback route, with the google code
-  app.get('/auth/google/callback', passport.authenticate('google'));
+  app.get(
+    '/auth/google/callback',
+    passport.authenticate('google'),
+    (req, res) => {
+      res.redirect('http://localhost:3000/surveys');
+    }
+  );
 
   // route that returns whoever is logged into our app
   app.get('/api/current_user', (req, res) => {
@@ -20,6 +26,6 @@ module.exports = (app) => {
   // route to logout a user
   app.get('/api/logout', (req, res) => {
     req.logout(); // takes cookie that contains the user's id and kills it
-    res.send(req.user); // that should return undefined
+    res.redirect('http://localhost:3000/');
   });
 };

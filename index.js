@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const cookieSession = require('cookie-session');
 const passport = require('passport');
@@ -11,6 +12,12 @@ mongoose.connect(keys.mongoURI);
 
 // create our express app
 const app = express();
+
+// allow http requests to servers with different domain names (we are going back and forth between localhost:3000 and localhost:5000 for our http requests)
+app.use(cors());
+
+// access req.body
+app.use(express.json());
 
 // tell express that it needs to use cookies
 app.use(
